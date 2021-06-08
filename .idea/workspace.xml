@@ -20,18 +20,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8335ecb7-cab5-4ea1-ae55-2547da7fbec2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front/reducers/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front/reducers/post.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front/reducers/user.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front/store/configureStore.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/front/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front/components/AppLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/components/AppLayout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/components/LoginForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/components/LoginForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/components/UserProfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/components/UserProfile.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/pages/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/pages/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/pages/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/pages/profile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/pages/signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/pages/signup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/pages/_app.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/pages/_app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,6 +75,7 @@
     <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/front/node_modules/prettier" />
     <property name="run.prettier.on.save" value="true" />
     <property name="settings.editor.selected.configurable" value="watcher.settings" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -92,7 +93,7 @@
       <updated>1623050934932</updated>
       <workItem from="1623050936514" duration="17856000" />
       <workItem from="1623110794143" duration="1918000" />
-      <workItem from="1623113509146" duration="841000" />
+      <workItem from="1623113509146" duration="5886000" />
     </task>
     <servers />
   </component>

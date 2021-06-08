@@ -1,6 +1,7 @@
 // 특정 컴포넌트끼리 공통인 사항들은 AppLayout.js처럼 공통점을 따로 컴포넌트화하여 각각 감싸준다.
 
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
@@ -14,7 +15,7 @@ const SearchInput = styled(Input.Search)`
 `;
 
 const AppLayout = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn); // isLoggedIn이 바뀌면 AppLayout 컴포넌트가 자동으로 리렌더링 된다.
   return (
     <div>
       <Menu mode="horizontal">
@@ -39,11 +40,7 @@ const AppLayout = ({ children }) => {
       </Menu>
       <Row gutter={100}>
         <Col xs={24} md={6}>
-          {isLoggedIn ? (
-            <UserProfile setIsLoggedIn={setIsLoggedIn} />
-          ) : (
-            <LoginForm setIsLoggedIn={setIsLoggedIn} />
-          )}
+          {isLoggedIn ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

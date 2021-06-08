@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 3060",
     "build": "next build"
   },
   "author": "bbanderson",
@@ -13,8 +13,11 @@
     "@ant-design/icons": "^4.6.2",
     "antd": "^4.16.2",
     "next": "^9.5.5",
+    "next-redux-wrapper": "^6.0.2",
     "prop-types": "^15.7.2",
     "react": "^16.14.0",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0",
     "styled-components": "^5.3.0"
   },
   "devDependencies": {
@@ -22,7 +25,8 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "prettier": "^2.3.1"
+    "prettier": "^2.3.1",
+    "redux-devtools-extension": "^2.13.9"
   },
   "prettier": {
     "singleQuote": true,
