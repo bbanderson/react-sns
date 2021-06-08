@@ -10,14 +10,24 @@
   "author": "bbanderson",
   "license": "ISC",
   "dependencies": {
+    "@ant-design/icons": "^4.6.2",
+    "antd": "^4.16.2",
     "next": "^9.5.5",
     "prop-types": "^15.7.2",
-    "react": "^16.14.0"
+    "react": "^16.14.0",
+    "styled-components": "^5.3.0"
   },
   "devDependencies": {
     "eslint": "^7.28.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-hooks": "^4.2.0"
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.3.1"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "tabWidth": 2,
+    "semi": true,
+    "useTabs": false
   }
 }
