@@ -20,18 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8335ecb7-cab5-4ea1-ae55-2547da7fbec2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/front/components/CommentForm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/components/PostCard.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/components/PostForm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/components/PostImages.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/components/imagesZoom/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front/components/imagesZoom/styles.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/front/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/pages/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/pages/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/reducers/post.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/reducers/post.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/reducers/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/reducers/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/components/AppLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/components/AppLayout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/components/imagesZoom/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/components/imagesZoom/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +85,7 @@
       <updated>1623050934932</updated>
       <workItem from="1623050936514" duration="17856000" />
       <workItem from="1623110794143" duration="1918000" />
-      <workItem from="1623113509146" duration="21297000" />
+      <workItem from="1623113509146" duration="23946000" />
     </task>
     <servers />
   </component>
@@ -117,6 +109,10 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="593" y="347" key="#File_Watchers/0.23.1440.877@0.23.1440.877" timestamp="1623113341411" />
+    <state x="354" y="147" key="#Inspections" timestamp="1623170231664">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="354" y="147" key="#Inspections/0.23.1440.877@0.23.1440.877" timestamp="1623170231664" />
     <state x="433" y="292" key="#Notifications" timestamp="1623112831374">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
