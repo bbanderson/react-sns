@@ -9,3 +9,5 @@
 ##### 4. `npm i next-redux-wrapper@6 redux react-redux`
 
 ##### 5. `npm i react-slick@0.26.1`
+
+##### 6. `npm i redux-thunk`
