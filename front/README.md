@@ -10,4 +10,4 @@
 
 ##### 5. `npm i react-slick@0.26.1`
 
-##### 6. `npm i redux-thunk`
+##### 6. `npm i redux-saga next-redux-saga`

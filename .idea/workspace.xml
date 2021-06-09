@@ -20,10 +20,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8335ecb7-cab5-4ea1-ae55-2547da7fbec2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/front/components/PostCardContent.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front/sagas/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/components/PostCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/components/PostCard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/components/imagesZoom/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/components/imagesZoom/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/front/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/pages/_app.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/pages/_app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/store/configureStore.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/store/configureStore.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +88,8 @@
       <updated>1623050934932</updated>
       <workItem from="1623050936514" duration="17856000" />
       <workItem from="1623110794143" duration="1918000" />
-      <workItem from="1623113509146" duration="25439000" />
+      <workItem from="1623113509146" duration="35007000" />
+      <workItem from="1623277842353" duration="1694000" />
     </task>
     <servers />
   </component>
@@ -121,6 +125,10 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="507" y="279" key="#com.intellij.ide.macro.MacrosDialog/0.23.1440.877@0.23.1440.877" timestamp="1623112955635" />
+    <state x="408" y="204" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1623277749459">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="408" y="204" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.23.1440.877@0.23.1440.877" timestamp="1623277749459" />
     <state x="458" y="215" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1623105216541">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
