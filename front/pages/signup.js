@@ -1,15 +1,19 @@
 import AppLayout from '../components/AppLayout';
 import React, { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Head from 'next/head';
 import { Button, Checkbox, Form, Input } from 'antd';
 import useInput from '../hooks/useInput';
 import styled from 'styled-components';
+import { SIGN_UP_REQUEST } from '../reducers/user';
 const ErrorMessage = styled.div`
   color: red;
 `;
 
 const Signup = () => {
-  const [id, onChangeId] = useInput('');
+  const dispatch = useDispatch();
+  const { isSigningUp } = useSelector((state) => state.user);
+  const [email, onChangeEmail] = useInput('');
   const [nickName, onChangeNickName] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -36,8 +40,9 @@ const Signup = () => {
     if (!term) {
       return setTermError(true);
     }
-    console.log(id, nickName, password);
-  }, [password, passwordCheck, term]);
+    console.log(email, nickName, password);
+    dispatch({ type: SIGN_UP_REQUEST, data: { email, password, nickName } });
+  }, [email, password, passwordCheck, term]);
 
   return (
     <>
@@ -47,9 +52,15 @@ const Signup = () => {
       <AppLayout>
         <Form onFinish={onSubmit}>
           <div>
-            <label htmlFor="user-id">아이디</label>
+            <label htmlFor="user-email">이메일</label>
             <br />
-            <Input name="user-id" value={id} onChange={onChangeId} required />
+            <Input
+              type="email"
+              name="user-email"
+              value={email}
+              onChange={onChangeEmail}
+              required
+            />
           </div>
           <div>
             <label htmlFor="user-nickname">닉네임</label>
@@ -95,7 +106,7 @@ const Signup = () => {
             )}
           </div>
           <div>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={isSigningUp}>
               가입
             </Button>
           </div>

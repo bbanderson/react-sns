@@ -11,3 +11,5 @@
 ##### 5. `npm i react-slick@0.26.1`
 
 ##### 6. `npm i redux-saga next-redux-saga`
+
+##### 7. `npm i -D babel-eslint eslint-config-airbnb eslint-plugin-jsx-a11y`

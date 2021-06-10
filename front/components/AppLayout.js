@@ -30,7 +30,7 @@ const Global = createGlobalStyle` // Gutter 버그 해결
 `;
 
 const AppLayout = ({ children }) => {
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn); // isLoggedIn이 바뀌면 AppLayout 컴포넌트가 자동으로 리렌더링 된다.
+  const { me } = useSelector((state) => state.user); // me이 바뀌면 AppLayout 컴포넌트가 자동으로 리렌더링 된다.
   return (
     <div>
       <Global />
@@ -56,7 +56,7 @@ const AppLayout = ({ children }) => {
       </Menu>
       <Row gutter={100}>
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          {me ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}
