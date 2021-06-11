@@ -8,6 +8,9 @@ export const initialState = {
   isSigningUp: false, // 회원가입 시도 중
   isSignedUp: false,
   signUpError: null,
+  changeNicknameLoading: false, // 닉네임 변경 시도중
+  changeNicknameDone: false,
+  changeNicknameError: null,
   me: null,
   signUpData: {},
   logInData: {},
@@ -25,6 +28,10 @@ export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
 export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 
+export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
+export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
+export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
+
 export const FOLLOW_REQUEST = 'FOLLOW_REQUEST';
 export const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS';
 export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
@@ -32,6 +39,9 @@ export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
 export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
+
+export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
 /* redux-thunk code
 export const loginAction = (data) => {
@@ -50,45 +60,33 @@ export const loginAction = (data) => {
 const dummyUser = (data) => ({
   ...data,
   id: 1,
-  nickname: data.nickname,
-  Posts: [], // 추후 Sequelize로 데이터를 합칠 것은 대문자로 입력.
+  nickname: 'bban',
+  Posts: [{ id: 1 }], // 추후 Sequelize로 데이터를 합칠 것은 대문자로 입력.
   Followings: [],
   Followers: [],
 });
-export const loginRequestAction = (data) => {
-  return {
-    type: 'LOG_IN_REQUEST',
-    data,
-  };
-};
-export const loginSuccessAction = (data) => {
-  return {
-    type: 'LOG_IN_SUCCESS',
-    data,
-  };
-};
-export const loginFailureAction = (data) => {
-  return {
-    type: 'LOG_IN_FAILURE',
-    data,
-  };
-};
+export const loginRequestAction = (data) => ({
+  type: 'LOG_IN_REQUEST',
+  data,
+});
+export const loginSuccessAction = (data) => ({
+  type: 'LOG_IN_SUCCESS',
+  data,
+});
+export const loginFailureAction = (data) => ({
+  type: 'LOG_IN_FAILURE',
+  data,
+});
 
-export const logoutRequestAction = () => {
-  return {
-    type: 'LOG_OUT_REQUEST',
-  };
-};
-export const logoutSuccessAction = () => {
-  return {
-    type: 'LOG_OUT_SUCCESS',
-  };
-};
-export const logoutFailureAction = () => {
-  return {
-    type: 'LOG_OUT_FAILURE',
-  };
-};
+export const logoutRequestAction = () => ({
+  type: 'LOG_OUT_REQUEST',
+});
+export const logoutSuccessAction = () => ({
+  type: 'LOG_OUT_SUCCESS',
+});
+export const logoutFailureAction = () => ({
+  type: 'LOG_OUT_FAILURE',
+});
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -105,7 +103,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         isLoggingIn: false,
         isLoggedIn: true,
-        me: dummyUser(),
+        me: dummyUser(action.data),
       };
     case LOG_IN_FAILURE:
       return {
@@ -153,6 +151,41 @@ const reducer = (state = initialState, action) => {
         ...state,
         isSigningUp: false,
         signUpError: action.error,
+      };
+    case CHANGE_NICKNAME_REQUEST:
+      return {
+        ...state,
+        changeNicknameLoading: true,
+        changeNicknameDone: false,
+        changeNicknameError: null,
+      };
+    case CHANGE_NICKNAME_SUCCESS:
+      return {
+        ...state,
+        changeNicknameLoading: false,
+        changeNicknameDone: true,
+      };
+    case CHANGE_NICKNAME_FAILURE:
+      return {
+        ...state,
+        changeNicknameLoading: false,
+        changeNicknameError: action.error,
+      };
+    case ADD_POST_TO_ME:
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Posts: [{ id: action.data }, ...state.me.Posts],
+        },
+      };
+    case REMOVE_POST_OF_ME:
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Posts: state.me.Posts.filter((v) => v.id !== action.data),
+        },
       };
     default:
       return state;

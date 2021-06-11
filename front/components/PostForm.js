@@ -29,7 +29,7 @@ const PostForm = () => {
 
   const onSubmit = useCallback(
     (e) => {
-      dispatch(addPost({ text }));
+      dispatch(addPost(text));
     },
     [text]
   );

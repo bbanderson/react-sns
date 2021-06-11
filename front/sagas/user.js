@@ -54,7 +54,7 @@ function* logOut() {
     yield delay(1000);
     yield put({
       type: LOG_OUT_SUCCESS,
-      data: result.data,
+      // data: result.data,
     });
   } catch (err) {
     yield put({

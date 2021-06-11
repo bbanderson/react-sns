@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button, Form, Input } from 'antd';
 import Link from 'next/link';
-import useInput from '../hooks/useInput';
 import { useDispatch, useSelector } from 'react-redux';
+import useInput from '../hooks/useInput';
 import { loginRequestAction } from '../reducers/user';
 
 const FormWrapper = styled(Form)`
@@ -31,6 +31,7 @@ const LoginForm = () => {
           name="user-email"
           value={email}
           onChange={onChangeEmail}
+          type="email"
           required
         />
       </div>

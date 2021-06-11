@@ -8,13 +8,16 @@ import {
   EllipsisOutlined,
   HeartTwoTone,
 } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
+import { REMOVE_POST_REQUEST } from '../reducers/post';
 
 const PostCard = ({ post }) => {
+  const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
+  const { removePostLoading } = useSelector((state) => state.post);
   const id = me?.id; // 로그인을 했다면 id가 있을 것임.
   const [isLiked, setIsLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -24,6 +27,11 @@ const PostCard = ({ post }) => {
   const onToggleComment = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
   }, []);
+
+  const onRemovePost = useCallback(() => {
+    dispatch({ type: REMOVE_POST_REQUEST, data: post.id });
+  }, []);
+
   return (
     <div>
       <Card
@@ -49,7 +57,13 @@ const PostCard = ({ post }) => {
                 {id && id === post.User.id ? (
                   <>
                     <Button type="primary">수정</Button>
-                    <Button type="danger">삭제</Button>
+                    <Button
+                      type="danger"
+                      loading={removePostLoading}
+                      onClick={onRemovePost}
+                    >
+                      삭제
+                    </Button>
                   </>
                 ) : (
                   <Button>신고</Button>

@@ -13,3 +13,5 @@
 ##### 6. `npm i redux-saga next-redux-saga`
 
 ##### 7. `npm i -D babel-eslint eslint-config-airbnb eslint-plugin-jsx-a11y`
+
+##### 8. `npm i shortid faker`
