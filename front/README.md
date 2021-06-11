@@ -15,3 +15,5 @@
 ##### 7. `npm i -D babel-eslint eslint-config-airbnb eslint-plugin-jsx-a11y`
 
 ##### 8. `npm i shortid faker`
+
+##### 9. `npm i immer`
