@@ -1,4 +1,4 @@
-# React Nodebird Front
+# React SNS Front
 
 ##### 1. `npm init`
 

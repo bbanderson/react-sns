@@ -3,23 +3,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
 import Head from 'next/head';
-import wrapper from '../store/configureStore';
 import withReduxSaga from 'next-redux-saga';
+import wrapper from '../store/configureStore';
 
-const NodeBird = ({ Component }) => {
-  // index.js의 return 부분이 Component에 해당한다. 즉 NodeBird은 index.js의 부모인 셈.
-  return (
-    <>
-      <Head>
-        <title>NodeBird</title>
-      </Head>
-      <Component />
-    </>
-  );
-};
-
-NodeBird.propTypes = {
+const SNSApp = ({ Component }) => (
+  // index.js의 return 부분이 Component에 해당한다. 즉 SNSApp은 index.js의 부모인 셈.
+  <>
+    <Head>
+      <title>SNS</title>
+    </Head>
+    <Component />
+  </>
+);
+SNSApp.propTypes = {
   Component: PropTypes.elementType.isRequired,
 };
 
-export default wrapper.withRedux(withReduxSaga(NodeBird));
+export default wrapper.withRedux(withReduxSaga(SNSApp));

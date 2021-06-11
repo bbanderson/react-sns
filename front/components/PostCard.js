@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
+import FollowButton from './FollowButton';
 import { REMOVE_POST_REQUEST } from '../reducers/post';
 
 const PostCard = ({ post }) => {
@@ -74,19 +75,20 @@ const PostCard = ({ post }) => {
             <EllipsisOutlined />
           </Popover>,
         ]}
+        extra={me && <FollowButton post={post} />}
       >
         <Card.Meta
           avatar={<Avatar>{post.User?.nickname[0]}</Avatar>}
           title={post.User?.nickname}
           description={<PostCardContent postData={post?.content} />}
         />
-        {/*<Content />*/}
-        {/*<Buttons></Buttons>*/}
+        {/* <Content /> */}
+        {/* <Buttons></Buttons> */}
       </Card>
       {commentFormOpened && (
         <div>
           <CommentForm post={post} />
-          {/* post : 댓글이 어느 포스트에 속하는지 알리기 위한 props*/}
+          {/* post : 댓글이 어느 포스트에 속하는지 알리기 위한 props */}
           <List
             header={`${post.Comments.length}개의 댓글`}
             itemLayout="horizontal"
