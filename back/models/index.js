@@ -10,7 +10,14 @@ const sequelize = new Sequelize( // node와 mysql을 연결(sequelize는 내부�
   config
 );
 
+db.Comment = require("./comment")(sequelize, Sequelize);
+db.Hashtag = require("./hashtag")(sequelize, Sequelize);
+db.Image = require("./image")(sequelize, Sequelize);
+db.Post = require("./post")(sequelize, Sequelize);
+db.User = require("./user")(sequelize, Sequelize);
+
 Object.keys(db).forEach((modelName) => {
+  // 위에서 각각 정의한 model의 관계를 설정
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }

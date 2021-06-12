@@ -12,9 +12,16 @@ module.exports = (sequelize, DataTypes) => {
     // 두 번째 인자: 세팅값
     {
       charset: "utf8mb4", // 이모티콘까지 포함하려면 utf8mb4로 저장
-      collate: "utf8_general_ci", // 한글 저장
+      collate: "utf8mb4_general_ci", // 한글 저장
     }
   );
-  Post.associate = (db) => {};
+  Post.associate = (db) => {
+    db.Post.belongsTo(db.User);
+    db.Post.hasMany(db.Comment);
+    db.Post.hasMany(db.Image);
+    db.Post.belongsToMany(db.Hashtag, { through: "PostHashtag" });
+    db.Post.belongsToMany(db.User, { through: "Like", as: "Liker" });
+    db.Post.belongsTo(db.Post, { as: "Retweet" }); // 리트윗 관리를 위해, 현재 게시글의 원본 id를 RetweetId 컬럼에 저장.
+  };
   return Post;
 };
