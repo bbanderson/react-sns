@@ -147,4 +147,4 @@ app.listen(PORT, () => {
 
 ##### 7. `npx sequelize db:create`로 데이터베이스에 database(schema) 등록하기
 
-##### 8. `npm i -D nodemon`
+##### 8. `npm i bcrypt`

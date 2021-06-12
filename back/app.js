@@ -1,5 +1,6 @@
 const express = require("express");
 const postRouter = require("./routes/post");
+const userRouter = require("./routes/user");
 const db = require("./models");
 const app = express();
 
@@ -9,6 +10,9 @@ db.sequelize
     console.log("db 연결 성공");
   })
   .catch(console.error);
+
+app.use(express.json()); // req.body에 프론트의 데이터를 json 형식으로 담아 줌.
+app.use(express.urlencoded({ extended: true })); // urlencoded 방식으로 넘어온 form submit 데이터를 qs 라이브러리로 해독
 
 app.get("/", (req, res) => {
   res.send("hello express");
@@ -23,6 +27,7 @@ app.get("/posts", (req, res) => {
 });
 
 app.use("/post", postRouter);
+app.use("/user", userRouter);
 
 const PORT = 3065;
 
