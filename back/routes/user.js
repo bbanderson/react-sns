@@ -16,7 +16,7 @@ router.post("/", async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 12); // 10~13이 1초 정도로 적절
     await User.create({
       email: req.body.email,
-      nickname: req.body.nickname,
+      nickname: req.body.nickName,
       password: hashedPassword,
     });
     res.status(201).send("ok"); // 200 : 성공함, 201 : 잘 생성됨(더 구체적인 의미).

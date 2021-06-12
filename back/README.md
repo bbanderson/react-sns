@@ -147,4 +147,37 @@ app.listen(PORT, () => {
 
 ##### 7. `npx sequelize db:create`로 데이터베이스에 database(schema) 등록하기
 
-##### 8. `npm i bcrypt`
+##### 8. `npm i bcrypt`로 비밀번호 해싱하여 저장하기
+
+##### 9. CORS
+**브라우저의 보안 장치일 뿐! 서로 다른 서버(컴퓨터) 간에는 상관 없음!**
+**`Browser(Client)와 Front Server` 또는 `Front Server와 Backend Server` 사이에는 CORS 에러가 발생하지 않는다.**
+```
+URL + PORT가 다르면 보안상 자원 공유를 하지 못하도록 브라우저가 보호해 주는 로직.
+보편적인 경우, 해킹이 아니라면 사용자의 브라우저를 조작할 수 없기에 톡톡한 보안 역할을 함.
+```
+
+###### 해결책
+
+1. **Proxy 방식**  
+브라우저와 프론트서버는 같은 도메인이기 때문에 CORS 에러가 애초에 발생하지 않으며,
+   CORS 에러는 원래 브라우저에서 관리하기 때문에, 브라우저가 아닌 환경에서는 도메인이 달라도 자원 공유가 상관없음을 이용.
+```
+Browser(Client, :3060) <-> Front Server(:3060) <-> Backend Server(:3065)
+```
+2. **서버에서 Response Header에 `Access-Control-Allow-Origin` 설정하기**  
+초기 차단은 브라우저가 하되, 서버에서 허용하는 방식
+```js
+const apiUrl = (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3060'); // 두번째 인자를 '*'로 하면 전체 도메인 허용
+  res.status(200).send('ok');
+};
+```
+
+3. **`npm i cors` 미들웨어로 편하게 처리하기**
+```js
+app.use(cors({
+  origin: '*', // origin: true로 하면 요청한 주소가 자동으로 대입됨.
+  credentials: false, // 기본값이 false이지만 꼭 적어주어야 
+}))
+```

@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
 const db = require("./models");
@@ -11,6 +12,12 @@ db.sequelize
   })
   .catch(console.error);
 
+app.use(
+  cors({
+    origin: true,
+    credentials: false,
+  })
+);
 app.use(express.json()); // req.body에 프론트의 데이터를 json 형식으로 담아 줌.
 app.use(express.urlencoded({ extended: true })); // urlencoded 방식으로 넘어온 form submit 데이터를 qs 라이브러리로 해독
 

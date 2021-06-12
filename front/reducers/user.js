@@ -161,16 +161,16 @@ const reducer = (state = initialState, action) =>
         draft.logOutError = action.error;
         break;
       case SIGN_UP_REQUEST:
-        draft.isSigningOut = true;
-        draft.isSignedOut = false;
+        draft.isSigningUp = true;
+        draft.isSignedUp = false;
         draft.signUpError = null;
         break;
       case SIGN_UP_SUCCESS:
-        draft.isSigningOut = false;
-        draft.isSignedOut = true;
+        draft.isSigningUp = false;
+        draft.isSignedUp = true;
         break;
       case SIGN_UP_FAILURE:
-        draft.isSigningOut = false;
+        draft.isSigningUp = false;
         draft.signUpError = action.error;
         break;
       case CHANGE_NICKNAME_REQUEST:
