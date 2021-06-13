@@ -4,6 +4,7 @@
 행동강령
 1. async~await 로직을 구현할 때는 try~catch로 예외처리를 하자.
 2. 서버 통신을 점검할 때는 네트워크 탭을 꼼꼼히 읽자(Method 켜기).
+3. 사용자 중에는 해커도 있으므로 Browser와 Front Server를 믿지 말자.
 ```
 
 ##### 1. `npm i sequelize sequelize-cli mysql2`
