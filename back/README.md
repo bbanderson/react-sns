@@ -1,5 +1,11 @@
 # React SNS Backend
 
+```
+행동강령
+1. async~await 로직을 구현할 때는 try~catch로 예외처리를 하자.
+2. 서버 통신을 점검할 때는 네트워크 탭을 꼼꼼히 읽자(Method 켜기).
+```
+
 ##### 1. `npm i sequelize sequelize-cli mysql2`
 
 ###### mysql2 : node와 mysql을 연결해주는 드라이버
@@ -7,7 +13,7 @@
 
 ##### 2. `npx sequelize init` 실행 후 `config.json` 설정
 ```json5
-// /back/config/config.json
+// /back/config/config.js
 {
   "development": {
     "username": "root",
@@ -182,18 +188,26 @@ app.use(cors({
 }))
 ```
 
-##### 10. 기타 로직 구현하기
-**서버에 요청할 때는 항상 try~catch로 감싼 후 await 처리를 잊지 말자**
-
-###### axios 중복 URL 분리
+##### 10. Front Server의 axios 중복 URL 분리
+###### 서버에 요청할 때는 항상 try~catch로 감싼 후 await 처리를 잊지 말자
 ```js
+// /front/sagas/index.js
 axios.defaults.baseURL = 'http://localhost:3065';
 ```
 
-###### passport 설정
+##### 11. passport 설정
 `npm i passport passport-local`
 
-
+```
+.
+├── app.js
+├── passport
+│   ├── index.js
+│   └── local.js
+└── routes
+    ├── post.js
+    └── user.js
+```
 ###### 로그인 과정
 ```
 1. 사용자가 로그인 폼에 정보 입력 후 Submit 클릭
@@ -204,4 +218,276 @@ axios.defaults.baseURL = 'http://localhost:3065';
 6. 각 전략에서 DB를 조회하면서 성공/실패 여부에 따라 done 분기처리
 7. done 결과를 passport.authenticate에서 다시 받아옴
 8. logInAPI 라우터에서 성공/실패 여부에 따라 res객체에 상태코드 또는 데이터 json 담기
+```
+###### 코드 구현
+```js
+// /app.js
+const express = require("express");
+const cors = require("cors");
+const postRouter = require("./routes/post");
+const userRouter = require("./routes/user");
+const db = require("./models");
+const passportConfig = require("./passport");
+const app = express();
+
+db.sequelize
+.sync()
+.then(() => {
+   console.log("db 연결 성공");
+})
+.catch(console.error);
+
+passportConfig();
+
+app.use(
+        cors({
+           origin: true,
+           credentials: false,
+        })
+);
+app.use(express.json()); // req.body에 프론트의 데이터를 json 형식으로 담아 줌.
+app.use(express.urlencoded({ extended: true })); // urlencoded 방식으로 넘어온 form submit 데이터를 qs 라이브러리로 해독
+app.use(session());
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use("/post", postRouter);
+app.use("/user", userRouter);
+
+const PORT = 3065;
+
+app.listen(PORT, () => {
+   console.log(`서버 실행 중 http://localhost:${PORT}`);
+});
+```
+```js
+// /passport/index.js
+const passport = require("passport");
+const local = require("./local");
+module.exports = () => {
+  passport.serializeUser(() => {});
+  passport.deserializeUser(() => {});
+
+  local();
+};
+```
+```js
+// /passport/local.js
+const passport = require("passport");
+const { Strategy: LocalStrategy } = require("passport-local"); // 다른 전략과 쉬운 구별을 위해 구조분해 이름변경
+const bcrypt = require("bcrypt");
+
+const { User } = require("../models");
+
+module.exports = () => {
+  passport.use(
+    new LocalStrategy(
+      // 첫 번째 인자 : req.body에 대한 설정
+      {
+        usernameField: "email", // req.body.email에서 email에 해당.
+        passwordField: "password", // req.body.password에서 password에 해당.
+      },
+      // 두 번째 인자 : 로그인 전략 세우기
+      async (email, password, done) => {
+        try {
+          const user = await User.findOne({
+            where: { email },
+          });
+          if (!user) {
+            // passport에서는 res로 직접 응답을 보내지 않고, 일단 done으로 결과를 판단한다!
+            // done(서버에러, 성공여부, 클라이언트에러(보내는 측에서 잘못 보낸 경우))
+
+            // 1단계 : 이메일부터 원래 존재하는지 판단
+            return done(null, false, { reason: "존재하지 않는 이메일입니다." });
+          }
+
+          // 2단계 : 이메일이 있다면 비밀번호 일치 확인
+          const result = await bcrypt.compare(password, user.password);
+          if (result) {
+            return done(null, user);
+          }
+          return done(null, false, { reason: "비밀번호가 틀렸습니다." });
+        } catch (error) {
+          console.error(error);
+          return done(error);
+        }
+      }
+    )
+  );
+};
+```
+```js
+// /routes/user.js
+const express = require("express");
+const bcrypt = require("bcrypt");
+const { User } = require("../models");
+const passport = require("passport");
+
+const router = express.Router();
+
+router.post("/login", (req, res, next) => {
+  // 미들웨어 확장
+  passport.authenticate("local", (err, user, info) => {
+    // 서버에서 에러가 난 경우 - 서버가 꺼져 있거나 기타 오류가 있는 경우
+    if (err) {
+      console.error(err); // 에러는 콘솔에 찍는 습관을 들이자.
+      return next(err);
+    }
+    // 클라에서 에러가 난 경우 - 계정 정보를 잘못 입력한 경우
+    if (info) {
+      console.error(info);
+      return res.status(401).send(info.reason); // 401 : 허가되지 않은 접근(로그인 실패 등), 403: 금지
+    }
+
+    // 우리가 사전 정의한 위 예외사항에 걸리지 않는다면, 드디어 passport로 로그인할 수 있다.
+    return req.login(user, async (loginErr) => {
+      if (loginErr) {
+        // passport 측에서 발생하는 오류 - 웬만해서는 거의 겪어보기 힘들지만, 혹시 모르니 분기처리
+        console.error(loginErr);
+        return next(loginErr);
+      }
+      return res.status(200).json(user); // ✅ 모든 예외사항을 통과함!! 드디어 로그인에 성공했기에 클라이언트에 사용자 정보를 json으로 넘겨주기!
+    });
+  })(req, res, next);
+});
+
+router.post("/", async (req, res, next) => {
+  // POST /post
+  try {
+    const exUser = await User.findOne({ where: { email: req.body.email } }); // 기존 유저가 없다면 null 반환
+    if (exUser) {
+      // 요청과 응답은 헤더(상태, 용량, 시간, 쿠키)와 바디(데이터)로 구성되어 있다.
+      // 4xx : 클라이언트의 잘못된 요청, 5xx : 서버의 잘못된 처리
+      return res.status(403).send("이미 사용중인 아이디입니다."); // return 필수(response 중복 방지)
+    }
+    const hashedPassword = await bcrypt.hash(req.body.password, 12); // 10~13이 1초 정도로 적절
+    await User.create({
+      email: req.body.email,
+      nickname: req.body.nickName,
+      password: hashedPassword,
+    });
+    res.status(201).send("ok"); // 200 : 성공함, 201 : 잘 생성됨(더 구체적인 의미).
+  } catch (error) {
+    console.error(error);
+    next(error); // next로 넘기는 에러는 status 500
+  }
+});
+
+router.post("/login");
+
+router.delete("/", (req, res) => {
+  // DELETE /post
+  res.json({ id: 1 });
+});
+
+module.exports = router;
+```
+
+##### 12. 쿠키/세션 설정
+`npm i express-session cookie-parser`  
+로그인을 하면, Browser와 Server는 같은 정보를 들고 있어야 한다.  
+그렇다고 DB가 가진 유저 정보를 Front Server에 그대로 전송하기에는 보안에 취약하다.  
+따라서 Backend Server는 Front Server에 실제 유저 정보를 랜덤 문자열(토큰)로 치환하여 보낸다.
+이후 Browser의 요청이 있을 때마다 해당 토큰을 쿠키에 담아 전송하고,   
+Backend Server는 기존 발급한 토큰과 일치하는지 판단하여 인증하게 된다.
+```
+// passport.authenticate 내부에서 req.login 호출 시 자동 생성
+// Response Header의 Set-Cookie: connect.sid=zskf@if0a9sdj로 들어감
+res.setHeader('Cookie', 'zskf@if0a9sdj')
+```
+그런데, 각 유저의 모든 정보를 쿠키에 담는다면 동접자가 많을 경우  
+서버 메모리가 버티지 못할 것이다.  
+`아이디, 이메일, 비밀번호, 결제내역, 카드정보 등등`  
+그래서 passport는 아이디어를 냈다.  
+쿠키에 모든 정보를 다 넣는 것이 아니라,  
+DB를 조회할 수 있는 id만 매칭시켜서 그때그때 로딩하게 하는 것이다.  
+`실서비스에서는 아예 세션 저장용 DB로 redis를 사용`
+```js
+app.use(cookieParser());
+app.use(session());
+app.use(passport.initialize());
+app.use(passport.session());
+```
+###### 로그인
+`return req.login(user, cb)`이 실행되면,  
+동시에 `serializeUser(cb)`가 실행된다.
+```js
+// 유저 정보 중에서 쿠키랑 매칭할 DB id만 저장하는 로직
+// 로그인에 성공해야 실행된다.
+passport.serializeUser((user, done) => {
+  done(null, user.id); // 유저의 id값을 쿠키에 넣어줌.
+});
+```
+```js
+// 클라이언트가 전송한 쿠키 속 id 값을 통해 DB를 조회하는 로직
+// 로그인에 일단 성공하면, 그 다음 요청부터 매번 실행된다.
+// 모든 라우터가 실행되기 전에 이 함수가 실행된다.
+// req.user에서 실제 데이터 참조 -> 게시글 생성/수정/삭제 권한 부여
+// passport.serializeUser로 암호화된 데이터를 이용하여 복호화
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        id,
+      },
+    });
+    done(null, user); // 실제 데이터를 req.user에 넣어줌.
+  } catch (error) {
+     console.error(error);
+     done(error);
+  }
+});
+```
+
+###### 로그아웃
+세션과 쿠키를 삭제하기만 하면 끝!
+```js
+router.post('/logout', (req, res) => {
+  req.logout();
+  req.session.destroy();
+  res.send('ok');
+})
+```
+
+##### 13. dotenv 적용
+```js
+const dotenv = require('dotenv');
+dotenv.config();
+
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(session({
+   saveUninitialized: false,
+   resave: false,
+   secret: process.env.COOKIE_SECRET,
+}));
+```
+```js
+// /config/config.json -> /config/config.js로 변경
+
+const dotenv = require("dotenv");
+dotenv.config();
+
+module.exports = {
+  development: {
+    username: "root",
+    password: process.env.DB_PASSWORD,
+    database: "react-sns",
+    host: "127.0.0.1",
+    dialect: "mysql",
+  },
+  test: {
+    username: "root",
+    password: null,
+    database: "database_test",
+    host: "127.0.0.1",
+    dialect: "mysql",
+  },
+  production: {
+    username: "root",
+    password: null,
+    database: "database_production",
+    host: "127.0.0.1",
+    dialect: "mysql",
+  },
+};
 ```

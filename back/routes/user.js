@@ -53,7 +53,11 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.post("/login");
+router.post("/logout", (req, res) => {
+  req.logout();
+  req.session.destroy();
+  res.send("ok");
+});
 
 router.delete("/", (req, res) => {
   // DELETE /post
