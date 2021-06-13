@@ -1,11 +1,12 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const { User, Post } = require("../models");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 const passport = require("passport");
 
 const router = express.Router();
 
-router.post("/login", (req, res, next) => {
+router.post("/login", isNotLoggedIn, (req, res, next) => {
   // 미들웨어 확장
   passport.authenticate("local", (err, user, info) => {
     // 서버에서 에러가 난 경우 - 서버가 꺼져 있거나 기타 오류가 있는 경우
@@ -54,7 +55,7 @@ router.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", isNotLoggedIn, async (req, res, next) => {
   // POST /post
   try {
     const exUser = await User.findOne({ where: { email: req.body.email } }); // 기존 유저가 없다면 null 반환
@@ -76,7 +77,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.post("/logout", (req, res) => {
+router.post("/logout", isLoggedIn, (req, res) => {
   req.logout();
   req.session.destroy();
   res.send("ok");
