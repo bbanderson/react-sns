@@ -1,6 +1,9 @@
 import produce from 'immer';
 
 export const initialState = {
+  loadUserLoading: false, // 내 로그인 정보 가져오기 시도 중
+  loadUserDone: false,
+  loadUserError: null,
   followLoading: false, // 팔로우 시도 중
   followDone: false,
   followError: null,
@@ -29,6 +32,10 @@ export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
 
 export const RESET_LOG_IN_ERROR = 'RESET_LOG_IN_ERROR';
+
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
@@ -105,8 +112,21 @@ export const logoutFailureAction = () => ({
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case LOAD_MY_INFO_REQUEST:
+        draft.loadUserLoading = true;
+        draft.loadUserDone = false;
+        draft.loadUserError = null;
+        break;
+      case LOAD_MY_INFO_SUCCESS:
+        draft.loadUserLoading = false;
+        draft.loadUserDone = true;
+        draft.me = action.data;
+        break;
+      case LOAD_MY_INFO_FAILURE:
+        draft.loadUserLoading = false;
+        draft.loadUserError = action.error;
+        break;
       case FOLLOW_REQUEST:
-        console.log('REDUCER Login 💖');
         draft.followLoading = true;
         draft.followDone = false;
         draft.followError = null;
@@ -121,7 +141,6 @@ const reducer = (state = initialState, action) =>
         draft.followError = action.error;
         break;
       case UNFOLLOW_REQUEST:
-        console.log('REDUCER Login 💖');
         draft.unfollowLoading = true;
         draft.unfollowDone = false;
         draft.unfollowError = null;

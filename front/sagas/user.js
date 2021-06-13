@@ -4,6 +4,9 @@ import {
   FOLLOW_FAILURE,
   FOLLOW_REQUEST,
   FOLLOW_SUCCESS,
+  LOAD_MY_INFO_FAILURE,
+  LOAD_MY_INFO_REQUEST,
+  LOAD_MY_INFO_SUCCESS,
   LOG_IN_FAILURE,
   LOG_IN_REQUEST,
   LOG_IN_SUCCESS,
@@ -17,6 +20,10 @@ import {
   UNFOLLOW_REQUEST,
   UNFOLLOW_SUCCESS,
 } from '../reducers/user';
+
+function loadUserAPI() {
+  return axios.get('/user');
+}
 
 function logInAPI(data) {
   return axios.post('/user/login', data);
@@ -32,6 +39,16 @@ function followAPI() {
 
 function unfollowAPI() {
   return axios.post('/api/unfollow');
+}
+
+function* loadUser(action) {
+  try {
+    const result = yield call(loadUserAPI, action.data);
+    yield put({ type: LOAD_MY_INFO_SUCCESS, data: result.data });
+  } catch (err) {
+    console.error(error);
+    yield put({ type: LOAD_MY_INFO_FAILURE, error: err.response.data });
+  }
 }
 
 function* follow(action) {
@@ -106,6 +123,10 @@ function* signUp(action) {
   }
 }
 
+function* watchLoadUser() {
+  yield takeLatest(LOAD_MY_INFO_REQUEST, loadUser);
+}
+
 function* watchFollow() {
   yield takeLatest(FOLLOW_REQUEST, follow); // LOG_IN 액션이 실행될 때까지 기다리다가, 실행되면 logIn 호출.
 }
@@ -128,6 +149,7 @@ function* watchSignUp() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchLoadUser),
     fork(watchFollow),
     fork(watchUnfollow),
     fork(watchLogIn),

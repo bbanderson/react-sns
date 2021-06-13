@@ -5,6 +5,7 @@
 1. async~await 로직을 구현할 때는 try~catch로 예외처리를 하자.
 2. 서버 통신을 점검할 때는 네트워크 탭을 꼼꼼히 읽자(Method 켜기).
 3. 사용자 중에는 해커도 있으므로 Browser와 Front Server를 믿지 말자.
+4. 성능 개선을 위해, 작성글/팔로워 등 개수만 필요한 경우 id만 가져오자.
 ```
 
 ##### 1. `npm i sequelize sequelize-cli mysql2`
@@ -530,7 +531,14 @@ app.use(cors({
 }));
 ```
 **Front Server**  
+`axios` GET/DELETE 요청을 보낼 때, 2번째 인자로 `{ withCredentials: true }` 옵션을 추가한다.  
 `axios` POST 요청을 보낼 때, 3번째 인자로 `{ withCredentials: true }` 옵션을 추가한다.
+```js
+// /sagas/user.js (front)
+axios.get('/user', {
+  withCredentials: true
+});
+```
 ```js
 // /sagas/post.js (front)
 axios.post('/post', { content: data }, {
@@ -544,3 +552,5 @@ Front Server의 `/sagas/index.js`에서 도메인과 함께 한번에 관리한�
 axios.defaults.baseURL = 'http://localhost:3065';
 axios.defaults.withCredentials = true;
 ```
+**단, 로그인 유지를 제대로 구현하려면 SSR이 필요하다.**  
+

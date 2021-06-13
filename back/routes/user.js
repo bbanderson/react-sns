@@ -6,6 +6,32 @@ const passport = require("passport");
 
 const router = express.Router();
 
+router.get("/", async (req, res, next) => {
+  // GET /user
+  try {
+    // 로그인 여부 판단
+    if (req.user) {
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: req.user.id },
+        attributes: {
+          exclude: ["password"],
+        },
+        include: [
+          { model: User, as: "Followers", attributes: ["id"] },
+          { model: User, as: "Followings", attributes: ["id"] },
+          { model: Post, attributes: ["id"] },
+        ],
+      });
+      res.status(200).json(fullUserWithoutPassword);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   // 미들웨어 확장
   passport.authenticate("local", (err, user, info) => {
