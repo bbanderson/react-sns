@@ -181,3 +181,27 @@ app.use(cors({
   credentials: false, // 기본값이 false이지만 꼭 적어주어야 
 }))
 ```
+
+##### 10. 기타 로직 구현하기
+**서버에 요청할 때는 항상 try~catch로 감싼 후 await 처리를 잊지 말자**
+
+###### axios 중복 URL 분리
+```js
+axios.defaults.baseURL = 'http://localhost:3065';
+```
+
+###### passport 설정
+`npm i passport passport-local`
+
+
+###### 로그인 과정
+```
+1. 사용자가 로그인 폼에 정보 입력 후 Submit 클릭
+2. LOG_IN_REQUEST 액션 발행 및 dispatch
+3. watch중이던 redux-saga가 logInAPI 호출하면서 서버로 폼 데이터 전송
+4. 서버는 logInAPI 주소를 통해 req.body로 데이터를 받아옴
+5. passport.authenticate를 호출하면서 해당 전략을 실행 
+6. 각 전략에서 DB를 조회하면서 성공/실패 여부에 따라 done 분기처리
+7. done 결과를 passport.authenticate에서 다시 받아옴
+8. logInAPI 라우터에서 성공/실패 여부에 따라 res객체에 상태코드 또는 데이터 json 담기
+```

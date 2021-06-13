@@ -1,8 +1,35 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const { User } = require("../models");
+const passport = require("passport");
 
 const router = express.Router();
+
+router.post("/login", (req, res, next) => {
+  // 미들웨어 확장
+  passport.authenticate("local", (err, user, info) => {
+    // 서버에서 에러가 난 경우 - 서버가 꺼져 있거나 기타 오류가 있는 경우
+    if (err) {
+      console.error(err); // 에러는 콘솔에 찍는 습관을 들이자.
+      return next(err);
+    }
+    // 클라에서 에러가 난 경우 - 계정 정보를 잘못 입력한 경우
+    if (info) {
+      console.error(info);
+      return res.status(401).send(info.reason); // 401 : 허가되지 않은 접근(로그인 실패 등), 403: 금지
+    }
+
+    // 우리가 사전 정의한 위 예외사항에 걸리지 않는다면, 드디어 passport로 로그인할 수 있다.
+    return req.login(user, async (loginErr) => {
+      if (loginErr) {
+        // passport 측에서 발생하는 오류 - 웬만해서는 거의 겪어보기 힘들지만, 혹시 모르니 분기처리
+        console.error(loginErr);
+        return next(loginErr);
+      }
+      return res.status(200).json(user); // ✅ 모든 예외사항을 통과함!! 드디어 로그인에 성공했기에 클라이언트에 사용자 정보를 json으로 넘겨주기!
+    });
+  })(req, res, next);
+});
 
 router.post("/", async (req, res, next) => {
   // POST /post
@@ -25,6 +52,8 @@ router.post("/", async (req, res, next) => {
     next(error); // next로 넘기는 에러는 status 500
   }
 });
+
+router.post("/login");
 
 router.delete("/", (req, res) => {
   // DELETE /post
