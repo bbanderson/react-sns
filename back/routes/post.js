@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Post, Comment } = require("../models");
+const { Post, Comment, Image, User } = require("../models");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 router.post("/", isLoggedIn, async (req, res, next) => {
@@ -10,7 +10,13 @@ router.post("/", isLoggedIn, async (req, res, next) => {
       content: req.body.content,
       UserId: req.user.id,
     });
-    res.status(201).json(post);
+    // 새로운 게시글에는 유저가 입력한 최소한의 정보만 있는 반면,
+    // 이를 화면에 바로 보여주기 위해서는 프론트 리액트 컴포넌트에서 설정한 정보들을 모두 불러와야 한다.
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
+      include: [{ model: Image }, { model: Comment }, { model: User }],
+    });
+    res.status(201).json(fullPost);
   } catch (error) {
     console.error(error);
     next(error);

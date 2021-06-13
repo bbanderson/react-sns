@@ -514,3 +514,33 @@ app.use((err, req, res, next) => {
   // 나만의 커스텀 에러처리 로직
 });
 ```
+
+##### 15. CORS { credentials: true } 설정 - `401 error`
+Browser는 도메인이 다르면 자원 공유를 할 수 없도록 차단한다.  
+Browser와 Backend Server는 포트가 달라 도메인도 다르다.  
+따라서 로그인 이후의 요청들에 대해서도 라우터 간 쿠키를 공유해야 `401`에러가 뜨지 않는다.  
+###### 해결책 - CORS 설정
+**Backend Server**  
+`cors` 모듈의 옵션 중 `credentials`을 `true`로 변경하여 쿠키 공유를 허용한다(기본값은 false).
+```js
+// /app.js
+app.use(cors({
+   origin: "http://localhost:3060", // origin: true도 가능
+   credentials: true
+}));
+```
+**Front Server**  
+`axios` POST 요청을 보낼 때, 3번째 인자로 `{ withCredentials: true }` 옵션을 추가한다.
+```js
+// /sagas/post.js (front)
+axios.post('/post', { content: data }, {
+  withCredentials: true
+});
+```
+OR  
+Front Server의 `/sagas/index.js`에서 도메인과 함께 한번에 관리한다.
+```js
+// /sagas/index.js
+axios.defaults.baseURL = 'http://localhost:3065';
+axios.defaults.withCredentials = true;
+```

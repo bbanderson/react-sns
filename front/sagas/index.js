@@ -5,6 +5,7 @@ import userSaga from './user';
 import postSaga from './post';
 
 axios.defaults.baseURL = 'http://localhost:3065';
+axios.defaults.withCredentials = true;
 
 export default function* rootSaga() {
   // all : 배열 내 모든 함수를 한번에 실행
