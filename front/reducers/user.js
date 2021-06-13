@@ -28,6 +28,8 @@ export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
 
+export const RESET_LOG_IN_ERROR = 'RESET_LOG_IN_ERROR';
+
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
 export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE';
@@ -76,6 +78,10 @@ const dummyUser = (data) => ({
 export const loginRequestAction = (data) => ({
   type: 'LOG_IN_REQUEST',
   data,
+});
+
+export const resetLogInError = () => ({
+  type: 'RESET_LOG_IN_ERROR',
 });
 export const loginSuccessAction = (data) => ({
   type: 'LOG_IN_SUCCESS',
@@ -145,6 +151,9 @@ const reducer = (state = initialState, action) =>
       case LOG_IN_FAILURE:
         draft.isLoggingIn = false;
         draft.logInError = action.error;
+        break;
+      case RESET_LOG_IN_ERROR:
+        draft.logInError = null;
         break;
       case LOG_OUT_REQUEST:
         draft.isLoggingOut = true;

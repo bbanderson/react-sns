@@ -14,13 +14,19 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { isSigningUp, isSignedUp, signUpError } = useSelector(
+  const { isSigningUp, isSignedUp, signUpError, me } = useSelector(
     (state) => state.user
   );
 
   useEffect(() => {
+    if (me && me.id) {
+      Router.replace('/');
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
     if (isSignedUp) {
-      Router.push('/');
+      Router.replace('/');
     }
   }, [isSignedUp]);
 

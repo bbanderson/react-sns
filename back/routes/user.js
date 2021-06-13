@@ -1,6 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const { User } = require("../models");
+const { User, Post } = require("../models");
 const passport = require("passport");
 
 const router = express.Router();
@@ -26,7 +26,30 @@ router.post("/login", (req, res, next) => {
         console.error(loginErr);
         return next(loginErr);
       }
-      return res.status(200).json(user); // ✅ 모든 예외사항을 통과함!! 드디어 로그인에 성공했기에 클라이언트에 사용자 정보를 json으로 넘겨주기!
+      // ✅ 모든 예외사항을 통과함!! 드디어 로그인에 성공했기에 클라이언트에 사용자 정보를 json으로 넘겨주기!
+      // 이 user는 saga에서 호출한 logInAPI의 반환값이 되고, 이어서 LOG_IN_SUCCESS 액션의 데이터가 되며,
+      // reducer에서는 action.data가 된다. 이 프로젝트에서는 reducer의 user.me에 데이터가 들어가게 된다.
+      // 기존 user에는 password는 들어있으면서 꼭 필요한 기타 정보가 없으므로, 완전한 유저 정보를 다시 로드.
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: user.id },
+        attributes: {
+          exclude: ["password"],
+        },
+        include: [
+          {
+            model: Post,
+          },
+          {
+            model: User,
+            as: "Followings",
+          },
+          {
+            model: User,
+            as: "Followers",
+          },
+        ],
+      });
+      return res.status(200).json(fullUserWithoutPassword);
     });
   })(req, res, next);
 });
