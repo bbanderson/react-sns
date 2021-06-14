@@ -557,3 +557,73 @@ axios.defaults.withCredentials = true;
 ```
 **단, 로그인 유지를 제대로 구현하려면 SSR이 필요하다.**  
 
+##### 16. API 연결을 위한 Saga Time!
+액션을 계속 생성하게 될 것이다!
+
+##### 17. `multer`로 `multipart/form-data`처리
+아래 두가지는 `multipart` 데이터 형식(파일/이미지/동영상)을 처리하지 못한다.  
+```js
+// /app.js
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+```
+따라서 이미지 업로드를 위해서는 `multer` 미들웨어가 별도로 필요하다.  
+```
+npm i multer
+```
+
+`multer` 모듈은 Backend Server의 최상위에 위치한 `/app.js`에서  
+물론 import 할 수 있다.  
+하지만 폼마다 전송하고자 하는 데이터 형식이 다르기 때문에,  
+주로 각 라우터마다 미들웨어로서 따로 장착해주는 패턴을 따른다.  
+**이미지/동영상은 서버 리소스에 부담을 주기 때문에,  
+대규모 실무에서는 Front에서 Cloud로 직접 올리는 방식을 취한다.**
+```js
+const upload = multer({
+   // 저장소 옵션
+   storage: multer.diskStorage({ // 로컬 디스크 이용
+      destination(req, file, done) { // 목적지 설정
+        done(null, 'uploads'); // /uploads 폴더 선택(fs 모듈로 사전 생성 필요!)
+      },
+      filename(req, file, done) { // 파일명 설정
+        // 파일 확장자 추출
+        const ext = path.extname(file.originalname);
+        // 확장자 제외한 파일명 추출
+        const basename = path.basename(file.originalname, ext);
+        // 파일명 중복을 피하기 위해 밀리초 단위 삽입 -> overwrite 방지
+        done(null, basename + new Date().getTime() + ext)
+      }
+   }),
+   // 파일 용량을 제한함으로써 서버 공격 방지
+   limits: { fileSize: 20 * 1024 * 1024 } // 20MB
+})
+
+router.post(
+  '/images',
+  isLoggedIn,
+  // single: 단일 파일, array: 한개 input 여러 파일
+  // fields: 여러 input 여러 file, none: 텍스트/json
+  upload.array('image'), // JSX form name의 value
+  (req, res, next) => {
+
+})
+```
+
+업로드 프로세스 2가지
+폼 전송 시 이미지를 포함한 모든 폼 데이터를 한번에 올리는 방식
+Backend에서 개발하기는 간단하나, 이미지 미리보기가 애매하다.
+이미 업로드를 다 한 후에 이미지 리사이징/미리보기/보정/머신러닝이 가능하기 때문에,
+오래 걸리고 동시 작업이 어려움
+
+이미지만 먼저 선택하여 서버에 선 업로드
+서버 업로드가 완료되면 파일명 반환 & 미리보기/리사이징 백그라운드 처리
+사용자는 프론트에서 나머지 정보 기입중
+오래 걸리는 작업을 먼저 처리하도록 함 -> 효율적!
+단, 요청이 2번 왔다갔다 하기 때문에, 구현이 복잡함.
+이미지는 이미 올라가있기 때문에, 서버 용량 차지함 -> 머신러닝 등 자산이 되므로 단점까지는 아님.
+```
+이미지 관리 비용 < 이미지 보유 가치
+```
+
+**`new FormData()`는 `axios.post('/api/route/', {key: value}` 형태로 감싸면 안된다!**  
+**{}로 묶는 순간 json이 되기 때문에 `multipart` 데이터 형식이 깨지게 된다.**
