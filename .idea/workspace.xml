@@ -24,13 +24,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8335ecb7-cab5-4ea1-ae55-2547da7fbec2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/routes/post.js" beforeDir="false" afterPath="$PROJECT_DIR$/back/routes/post.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/routes/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/back/routes/user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/components/NicknameEditForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/components/NicknameEditForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/reducers/post.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/reducers/post.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/reducers/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/reducers/user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/sagas/post.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/sagas/post.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/sagas/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/sagas/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/components/FollowButton.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/components/FollowButton.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +101,7 @@
       <workItem from="1623277842353" duration="6547000" />
       <workItem from="1623291048098" duration="6868000" />
       <workItem from="1623304251397" duration="20863000" />
-      <workItem from="1623423366341" duration="52526000" />
+      <workItem from="1623423366341" duration="52998000" />
     </task>
     <servers />
   </component>
