@@ -8,7 +8,10 @@
 4. 사용자 중에는 해커도 있으므로 Browser와 Front Server를 믿지 말자.
 5. 성능 개선을 위해, 작성글/팔로워 등 개수만 필요한 경우 id만 가져오자.
 6. 유저 정보를 조회할 때, Front에 비밀번호를 전송하지 않도록 주의하자.
-7. 현재 사용자 id는 req.user에 들어 있으므로, 프론트에서 보낼 필요없다. 
+7. 현재 사용자 id는 req.user에 들어 있으므로, 프론트에서 보낼 필요없다.
+8. map 안의 콜백함수(onClick 등)에 데이터를 넣고 싶다면, 고차함수로 만들자.
+9. formData는 이미지 등 multipart가 아니면 필요없으며, 구조분해 하지말자.
+10. 파일은 S3로, 파일경로는 DB로 따로 관리하여 CDN 캐싱 등 이점을 노린다.  
 ```
 
 ##### 1. `npm i sequelize sequelize-cli mysql2`
@@ -609,21 +612,65 @@ router.post(
 })
 ```
 
-업로드 프로세스 2가지
-폼 전송 시 이미지를 포함한 모든 폼 데이터를 한번에 올리는 방식
-Backend에서 개발하기는 간단하나, 이미지 미리보기가 애매하다.
-이미 업로드를 다 한 후에 이미지 리사이징/미리보기/보정/머신러닝이 가능하기 때문에,
-오래 걸리고 동시 작업이 어려움
-
-이미지만 먼저 선택하여 서버에 선 업로드
-서버 업로드가 완료되면 파일명 반환 & 미리보기/리사이징 백그라운드 처리
-사용자는 프론트에서 나머지 정보 기입중
-오래 걸리는 작업을 먼저 처리하도록 함 -> 효율적!
-단, 요청이 2번 왔다갔다 하기 때문에, 구현이 복잡함.
-이미지는 이미 올라가있기 때문에, 서버 용량 차지함 -> 머신러닝 등 자산이 되므로 단점까지는 아님.
+###### 업로드 프로세스 2가지
+1. **폼 전송 시 이미지를 포함한 모든 폼 데이터를 한번에 올리는 방식**   
+`장점` : Backend에서 개발하기에 간단하다.  
+`단점` : 업로드를 모두 마친 후에야 기타 컨텐츠 수정 및 이미지 미리보기/리사이징/보정/머신러닝이 가능하기 때문에,
+오래 걸리고 동시 작업이 어렵다.<br/><br/>
+2. **이미지만 먼저 선택하여 서버에 선 업로드하는 방식**  
+`장점` : 용량이 커서 오래 걸리는 이미지 전송을 먼저 처리한 후,  
+서버 업로드가 완료되면 파일명 반환과 함께 미리보기/리사이징 백그라운드 처리가 완료됨.  
+따라서, 사용자는 프론트에서 나머지 정보를 동시에 기입하는 효율성을 갖게 됨.  
+`단점` : 요청이 2번 왔다갔다 하기 때문에, 구현이 복잡함.  
+도중에 취소하더라도 이미지는 이미 올라가있기 때문에, 서버의 용량을 차지함.  
+   하지만 이후 머신러닝 등에 이용할 수 있는 자산이 되므로 꼭 단점까지는 아님.
 ```
 이미지 관리 비용 < 이미지 보유 가치
 ```
 
+###### ❗️주의사항
 **`new FormData()`는 `axios.post('/api/route/', {key: value}` 형태로 감싸면 안된다!**  
 **{}로 묶는 순간 json이 되기 때문에 `multipart` 데이터 형식이 깨지게 된다.**
+---
+##### 18. 이미지 미리보기를 위한 static 처리
+Backend Server에 이미지 업로드를 성공하고 나면,  
+Front Server는 해당 이미지의 Backend Server 내 업로드 경로를 반환받는다.  
+하지만 Browser가 이에 접근하려면 다음 2가지 설정을 해주어야 한다.  
+1. **Front Server**  
+   `JSX`의 `<img />` `src` 속성에 Backend Server 도메인을 포트까지 일치시킨다.
+   ```jsx
+    const onChangeImages = useCallback((e) => {
+      // 이미지 업로드 대화상자에서 확인/취소를 클릭한 경우 호출됨
+      console.log('images', e.target.files); // e.target.files는 배열이 아니라 유사배열임.
+      const imageFormData = new FormData(); // FormData(): multipart 형식으로 전송해 준다.
+      [].forEach.call(e.target.files, (f) => {
+        // 유사배열 처리하고자 배열의 형식 빌려쓰기
+        // key: image, value: f
+        // Backend Server에서 req.files로 접근한다.
+        // 만약 이미지가 아닌 텍스트/json인 경우,
+        // upload.none()으로 req.body.image 형태로 접근한다.
+        imageFormData.append('image', f);
+      });
+      dispatch({
+        type: UPLOAD_IMAGES_REQUEST,
+        data: imageFormData,
+      });
+    });
+   // 중략
+   {imagePaths.map(v => (
+     <div key={v}>
+       <img src={`http://localhost:3065/${v}`} />
+     </div>
+   ))}
+   ```
+2. **Backend Server**  
+   `/app.js`에서 `static` 경로 설정을 추가한다.  
+   *Browser에서 Backend Server의 폴더 구조를 알 수 없게 한다!*
+   ```js
+   // path.join() : 운영체제에 맞게 경로 구분자 생성
+   // express.static()의 첫번째 인자 : 요청한 URL 포트번호까지 포함
+   // 이 예제에서는 http://localhost:3065까지 포함
+   // Browser에서는 Backend Server의 URL이 노출되어도,
+   // 그 이후의 /uploads를 알 방법이 없다.
+   app.use(express.static('/', path.join(__dirname, 'uploads')))
+   ```

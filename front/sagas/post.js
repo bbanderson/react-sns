@@ -28,6 +28,9 @@ import {
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS,
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 
@@ -37,7 +40,7 @@ export default function* postSaga() {
   }
 
   function addPostAPI(data) {
-    return axios.post('/post', { content: data });
+    return axios.post('/post', data);
   }
 
   function removePostAPI(data) {
@@ -54,6 +57,10 @@ export default function* postSaga() {
 
   function unlikePostAPI(data) {
     return axios.delete(`/post/${data}/like`);
+  }
+
+  function uploadImagesAPI(data) {
+    return axios.post('/post/images', data);
   }
 
   function* likePost(action) {
@@ -95,7 +102,6 @@ export default function* postSaga() {
   function* addPost(action) {
     try {
       const result = yield call(addPostAPI, action.data);
-      const id = shortId.generate();
       yield put({
         type: ADD_POST_SUCCESS,
         data: result.data,
@@ -149,6 +155,22 @@ export default function* postSaga() {
     }
   }
 
+  function* uploadImages(action) {
+    try {
+      const result = yield call(uploadImagesAPI, action.data);
+      yield put({
+        type: UPLOAD_IMAGES_SUCCESS,
+        data: result.data,
+      });
+    } catch (err) {
+      console.error(err);
+      yield put({
+        type: UPLOAD_IMAGES_FAILURE,
+        error: err.response.data,
+      });
+    }
+  }
+
   function* watchLikePost() {
     yield takeLatest(LIKE_POST_REQUEST, likePost);
   }
@@ -169,6 +191,10 @@ export default function* postSaga() {
     yield takeLatest(ADD_COMMENT_REQUEST, addComment);
   }
 
+  function* watchUploadImages() {
+    yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
+  }
+
   yield all([
     fork(watchLikePost),
     fork(watchUnlikePost),
@@ -176,5 +202,6 @@ export default function* postSaga() {
     fork(watchAddPost),
     fork(watchRemovePost),
     fork(watchAddComment),
+    fork(watchUploadImages),
   ]);
 }

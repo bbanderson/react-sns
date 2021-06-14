@@ -14,13 +14,42 @@ try {
   fs.mkdirSync("uploads");
 }
 
-router.post("/", isLoggedIn, async (req, res, next) => {
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, "uploads");
+    },
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname);
+      const basename = path.basename(file.originalname, ext);
+      done(null, basename + "_" + new Date().getTime() + ext);
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 },
+});
+
+router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   // POST /post
   try {
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
     });
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        // 이미지를 여러개 올린 경우
+        // image: [foo.jpg, bar.png] 형태로 업로드 된다.
+        const images = await Promise.all(
+          req.body.image.map((image) => Image.create({ src: image }))
+        );
+        await post.addImages(images); // fullPost에서 Post.Images로 접근할 수 있도록 함.
+      } else {
+        // 이미지를 한개 올린 경우
+        // image: foo.jpg 형태로 업로드 된다.
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
     // 새로운 게시글에는 유저가 입력한 최소한의 정보만 있는 반면,
     // 이를 화면에 바로 보여주기 위해서는 프론트 리액트 컴포넌트에서 설정한 정보들을 모두 불러와야 한다.
     const fullPost = await Post.findOne({
@@ -135,19 +164,6 @@ router.delete("/:postId", isLoggedIn, async (req, res, next) => {
   }
 });
 
-const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, file, done) {
-      done(null, "uploads");
-    },
-    filename(req, file, done) {
-      const ext = path.extname(file.originalname);
-      const basename = path.basename(file.originalname, ext);
-      done(null, basename + new Date().getTime() + ext);
-    },
-  }),
-  limits: { fileSize: 20 * 1024 * 1024 },
-});
 router.post(
   "/images",
   isLoggedIn,

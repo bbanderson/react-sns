@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { PlusOutlined } from '@ant-design/icons';
 import ImagesZoom from './imagesZoom';
+
 const PostImages = ({ images }) => {
   // 업로드한 이미지 개수에 따라 크기를 달리 렌더링.
   const [showImagesZoom, setShowImagesZoom] = useState(false);
@@ -42,27 +43,28 @@ const PostImages = ({ images }) => {
     return (
       <>
         <img
-          role="presentation" //스크린 리더에게 클릭이 주 기능이 아님을 명시.
-          src={images[0].src}
+          role="presentation" // 스크린 리더에게 클릭이 주 기능이 아님을 명시.
+          src={`http://localhost:3065/${images[0].src}`}
           alt={images[0].src}
           onClick={onZoom}
         />
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
       </>
     );
-  } else if (images.length === 2) {
+  }
+  if (images.length === 2) {
     return (
       <>
         <img
-          role="presentation" //스크린 리더에게 클릭이 주 기능이 아님을 명시.
-          src={images[0].src}
+          role="presentation" // 스크린 리더에게 클릭이 주 기능이 아님을 명시.
+          src={`http://localhost:3065/${images[0].src}`}
           alt={images[0].src}
           onClick={onZoom}
           style={img2Style}
         />
         <img
-          role="presentation" //스크린 리더에게 클릭이 주 기능이 아님을 명시.
-          src={images[1].src}
+          role="presentation" // 스크린 리더에게 클릭이 주 기능이 아님을 명시.
+          src={`http://localhost:3065/${images[1].src}`}
           alt={images[1].src}
           onClick={onZoom}
           style={img2Style}
@@ -76,15 +78,15 @@ const PostImages = ({ images }) => {
       <img
         role="presentation"
         style={img2Style}
-        src={images[0].src}
+        src={`http://localhost:3065/${images[0].src}`}
         alt={images[0].src}
         onClick={onZoom}
       />
-      <div role="presentation" style={carrouselStyle} onClick={onZoom}>
+      <div role="presentation" style={carrouselStyle}>
         <img
           role="presentation"
           style={img3Style}
-          src={images[1].src}
+          src={`http://localhost:3065/${images[1].src}`}
           alt={images[1].src}
           onClick={onZoom}
         />

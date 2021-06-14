@@ -91,3 +91,4 @@ typings/
 .idea/
 .DS_Store
 config/
+uploads/

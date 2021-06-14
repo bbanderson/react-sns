@@ -5,6 +5,7 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const morgan = require("morgan");
+const path = require("path");
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
 const userRouter = require("./routes/user");
@@ -30,6 +31,7 @@ app.use(
   })
 );
 app.use(morgan("dev"));
+app.use(express.static(path.join(__dirname, "uploads")));
 app.use(express.json()); // axios 통신 : req.body에 프론트의 데이터를 json 형식으로 담아 줌.
 app.use(express.urlencoded({ extended: true })); // urlencoded 방식으로 넘어온 form submit 데이터를 qs 라이브러리로 해독(multipart 아님)
 app.use(cookieParser(process.env.COOKIE_SECRET));

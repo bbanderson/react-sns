@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     "Image",
     // 첫 번째 인자: 스키마
     {
-      content: {
+      src: {
         type: DataTypes.STRING(200), // 이미지는 URL이기 때문에 넉넉하게 잡는다.
         allowNull: false, // 필수
       },
