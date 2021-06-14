@@ -6,6 +6,7 @@
 2. 서버 통신을 점검할 때는 네트워크 탭을 꼼꼼히 읽자(Method 켜기).
 3. 사용자 중에는 해커도 있으므로 Browser와 Front Server를 믿지 말자.
 4. 성능 개선을 위해, 작성글/팔로워 등 개수만 필요한 경우 id만 가져오자.
+5. 유저 정보를 조회할 때, Front에 비밀번호를 전송하지 않도록 주의하자.
 ```
 
 ##### 1. `npm i sequelize sequelize-cli mysql2`

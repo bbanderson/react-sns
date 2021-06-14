@@ -14,7 +14,14 @@ router.post("/", isLoggedIn, async (req, res, next) => {
     // 이를 화면에 바로 보여주기 위해서는 프론트 리액트 컴포넌트에서 설정한 정보들을 모두 불러와야 한다.
     const fullPost = await Post.findOne({
       where: { id: post.id },
-      include: [{ model: Image }, { model: Comment }, { model: User }],
+      include: [
+        { model: Image },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["id", "nickname"] }],
+        },
+        { model: User, attributes: ["id", "nickname"] },
+      ],
     });
     res.status(201).json(fullPost);
   } catch (error) {
@@ -32,10 +39,16 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
     }
     const comment = await Comment.create({
       content: req.body.content,
-      PostId: req.params.postId,
+      PostId: parseInt(req.params.postId, 10), // req.params는 기본적으로 문자열로 인식된다.
       UserId: req.user.id,
     });
-    res.status(201).json(comment);
+    const fullComment = await Comment.findOne({
+      where: {
+        id: comment.id,
+      },
+      include: [{ model: User, attributes: ["id", "nickname"] }],
+    });
+    res.status(201).json(fullComment);
   } catch (error) {
     console.error(error);
     next(error);
