@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     "Hashtag",
     // 첫 번째 인자: 스키마
     {
-      content: {
+      name: {
         type: DataTypes.STRING(20),
         allowNull: false, // 필수
       },
