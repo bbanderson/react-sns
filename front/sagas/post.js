@@ -229,6 +229,12 @@ export default function* postSaga() {
   function* watchLoadPosts() {
     yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
   }
+  function* watchLoadUserPosts() {
+    yield throttle(5000, LOAD_POST_REQUEST, loadPost);
+  }
+  function* watchLoadUserHashtagPosts() {
+    yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
+  }
   function* watchAddPost() {
     yield takeLatest(ADD_POST_REQUEST, addPost);
   }
@@ -253,6 +259,8 @@ export default function* postSaga() {
     fork(watchUnlikePost),
     fork(watchLoadPost),
     fork(watchLoadPosts),
+    fork(watchLoadUserPosts),
+    fork(watchLoadUserHashtagPosts),
     fork(watchAddPost),
     fork(watchRemovePost),
     fork(watchAddComment),

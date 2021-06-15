@@ -287,3 +287,78 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
     └── favicon.ico
 ```
 Front Server의 루트에 `public` 폴더를 만들고, 그 안에 `.ico`, `.png` 등 파일을 추가하면 Browser가 자동으로 로드합니다.
+
+### 8. CSS 서버사이드 렌더링
+React로 아무리 css를 구현해도 SSR을 한다면 적용되지 않습니다.  
+즉, 첫 페이지는 css가 적용되지 않고 이후 페이지를 이동하면 그제서야 적용이 됩니다.  
+따라서 아래 작업들이 필요합니다.  
+##### 8-1. `Next.js`가 기본적으로 제공하는 `Babel` 설정을 수정해야 합니다.
+```
+npm i babel-plugin-styled-components
+```
+```json5
+// [Backend] /.babelrc
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    ["babel-plugin-styled-components", {
+      "ssr": true,
+      "displayName": true // 랜덤 className 해제
+    }]
+  ]
+}
+```
+
+#### 8-2. `/pages/_document.js` 추가하기
+기존에 `/pages/_app.js`가 모든 페이지를 감싸면서 각 페이지별 공통사항을 정리했다면,  
+`/pages/_document.js`는 그보다 더 상위 컴포넌트로서 `<html>`, `<head>`, `<body>` 등을 수정할 수 있게 됩니다.  
+- **`_document.js`는 `Class Component`입니다.**
+- **IE에서는 map 함수 등을 babel 조차 호환시킬 수 없기에 `polyfill`을 이용합니다.**
+  https://polyfill.io/v3/url-builder/
+```jsx
+import React from 'react';
+import Document, { Html, Head, Main, NextScript } from 'next/document';
+import { ServerStyleSheet } from 'styled-components';
+
+export default class MyDocument extends Document {
+  static async getInitialProps(ctx) {
+    const sheet = new ServerStyleSheet();
+    const originalRenderPage = ctx.renderPage;
+    try {
+      ctx.renderPage = () =>
+        originalRenderPage({
+          enhanceApp: (App) => (props) =>
+            sheet.collectStyles(<App {...props} />),
+        });
+      const initialProps = await Document.getInitialProps(ctx);
+      return {
+        ...initialProps,
+        styles: (
+          <>
+            {initialProps.styles}
+            {sheet.getStyleElement()}
+          </>
+        ),
+      };
+    } catch (error) {
+      console.error(error);
+    } finally {
+      sheet.seal();
+    }
+  }
+
+  render() {
+    return (
+      <Html>
+        <Head />
+        <body>
+          <script src="https://polyfill.io/v3/polyfill.min.js?features=default%2Ces2015%2Ces2016%2Ces2017%2Ces2018%2Ces2019" />
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
+}
+
+```
