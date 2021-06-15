@@ -20,7 +20,10 @@ const CommentForm = ({ post }) => {
   }, [addCommentDone]);
 
   const onSubmitComment = useCallback(() => {
-    console.log(post.id, commentText);
+    // console.log(post.id, commentText);
+    if (commentText === '' || commentText.trim() === '') {
+      return alert('댓글을 입력해주세요.');
+    }
     dispatch({
       type: ADD_COMMENT_REQUEST,
       data: { content: commentText, postId: post.id, userId: id },

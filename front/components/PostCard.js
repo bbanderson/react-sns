@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Popover, Avatar, Button, Card, Comment, List } from 'antd';
 import {
@@ -27,6 +27,7 @@ const PostCard = ({ post }) => {
   const id = me?.id; // 로그인을 했다면 id가 있을 것임.
   const liked = post.Likers.find((v) => v.id === id);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
+
   const onLike = useCallback(() => {
     if (!id) {
       return alert('로그인이 필요합니다.');
@@ -96,13 +97,33 @@ const PostCard = ({ post }) => {
             <EllipsisOutlined />
           </Popover>,
         ]}
+        title={
+          post.RetweetId ? `${post.User.nickname}님이 리트윗하셨습니다.` : ''
+        }
         extra={me && <FollowButton post={post} />}
       >
-        <Card.Meta
-          avatar={<Avatar>{post.User?.nickname[0]}</Avatar>}
-          title={post.User?.nickname}
-          description={<PostCardContent postData={post?.content} />}
-        />
+        {post.RetweetId && post.Retweet ? (
+          <Card
+            cover={
+              post.Retweet.Images &&
+              post.Retweet.Images[0] && (
+                <PostImages images={post.Retweet.Images} />
+              )
+            }
+          >
+            <Card.Meta
+              avatar={<Avatar>{post.Retweet.User?.nickname[0]}</Avatar>}
+              title={post.Retweet.User?.nickname}
+              description={<PostCardContent postData={post?.Retweet.content} />}
+            />
+          </Card>
+        ) : (
+          <Card.Meta
+            avatar={<Avatar>{post.User?.nickname[0]}</Avatar>}
+            title={post.User?.nickname}
+            description={<PostCardContent postData={post?.content} />}
+          />
+        )}
         {/* <Content /> */}
         {/* <Buttons></Buttons> */}
       </Card>
@@ -139,6 +160,8 @@ PostCard.propTypes = {
     Comments: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),
     Likers: PropTypes.arrayOf(PropTypes.object),
+    RetweetId: PropTypes.number,
+    Retweet: PropTypes.objectOf(PropTypes.any),
   }).isRequired,
 };
 
