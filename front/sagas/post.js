@@ -38,8 +38,8 @@ import {
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 
 export default function* postSaga() {
-  function loadPostAPI(data) {
-    return axios.get('/posts', data);
+  function loadPostAPI(lastId) {
+    return axios.get(`/posts?lastId=${lastId || 0}`); // GET만의 이점: URL로 데이터 캐싱 가능
   }
 
   function addPostAPI(data) {
@@ -92,7 +92,7 @@ export default function* postSaga() {
 
   function* loadPost(action) {
     try {
-      const result = yield call(loadPostAPI, action.data);
+      const result = yield call(loadPostAPI, action.lastId);
       yield put({
         type: LOAD_POST_SUCCESS,
         data: result.data,
