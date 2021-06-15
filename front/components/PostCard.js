@@ -16,6 +16,7 @@ import FollowButton from './FollowButton';
 import {
   LIKE_POST_REQUEST,
   REMOVE_POST_REQUEST,
+  RETWEET_REQUEST,
   UNLIKE_POST_REQUEST,
 } from '../reducers/post';
 
@@ -26,20 +27,31 @@ const PostCard = ({ post }) => {
   const id = me?.id; // 로그인을 했다면 id가 있을 것임.
   const liked = post.Likers.find((v) => v.id === id);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
-  const onLike = useCallback(
-    () => dispatch({ type: LIKE_POST_REQUEST, data: post.id }),
-    [id]
-  );
-  const onUnlike = useCallback(
-    () => dispatch({ type: UNLIKE_POST_REQUEST, data: post.id }),
-    [id]
-  );
+  const onLike = useCallback(() => {
+    if (!id) {
+      return alert('로그인이 필요합니다.');
+    }
+    return dispatch({ type: LIKE_POST_REQUEST, data: post.id });
+  }, [id]);
+  const onUnlike = useCallback(() => {
+    if (!id) {
+      return alert('로그인이 필요합니다.');
+    }
+    return dispatch({ type: UNLIKE_POST_REQUEST, data: post.id });
+  }, [id]);
   const onToggleComment = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
   }, []);
 
   const onRemovePost = useCallback(() => {
     dispatch({ type: REMOVE_POST_REQUEST, data: post.id });
+  }, [id]);
+
+  const onRetweet = useCallback(() => {
+    if (!id) {
+      return alert('로그인이 필요합니다.');
+    }
+    return dispatch({ type: RETWEET_REQUEST, data: post.id });
   }, [id]);
 
   return (
@@ -49,7 +61,7 @@ const PostCard = ({ post }) => {
           post.Images && post.Images[0] && <PostImages images={post.Images} />
         }
         actions={[
-          <RetweetOutlined key="retweet" />,
+          <RetweetOutlined key="retweet" onClick={onRetweet} />,
           liked ? (
             <HeartTwoTone
               key="heart"

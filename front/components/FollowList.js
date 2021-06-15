@@ -26,22 +26,18 @@ const itemStyle = {
 
 const FollowList = ({ header, data }) => {
   const dispatch = useDispatch();
-  const onCancel = useCallback(
-    (id) => () => {
-      if (header === '팔로잉') {
-        dispatch({
-          type: UNFOLLOW_REQUEST,
-          data: id,
-        });
-      } else {
-        dispatch({
-          type: REMOVE_FOLLOWER_REQUEST,
-          data: id,
-        });
-      }
-    },
-    []
-  );
+  const onCancel = (id) => () => {
+    if (header === '팔로잉' || header === '팔로잉 목록') {
+      dispatch({
+        type: UNFOLLOW_REQUEST,
+        data: id,
+      });
+    }
+    dispatch({
+      type: REMOVE_FOLLOWER_REQUEST,
+      data: id,
+    });
+  };
   return (
     <List
       style={listStyle}

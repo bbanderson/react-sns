@@ -74,7 +74,7 @@ function* loadUser(action) {
     const result = yield call(loadUserAPI, action.data);
     yield put({ type: LOAD_MY_INFO_SUCCESS, data: result.data });
   } catch (err) {
-    console.error(error);
+    console.error(err);
     yield put({ type: LOAD_MY_INFO_FAILURE, error: err.response.data });
   }
 }
