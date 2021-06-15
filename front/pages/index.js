@@ -5,7 +5,7 @@ import axios from 'axios';
 import AppLayout from '../components/AppLayout';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
-import { LOAD_POST_REQUEST } from '../reducers/post';
+import { LOAD_POSTS_REQUEST } from '../reducers/post';
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import wrapper from '../store/configureStore';
 
@@ -35,7 +35,7 @@ const Home = () => {
       ) {
         if (hasMorePost && !loadPostLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id;
-          dispatch({ type: LOAD_POST_REQUEST, lastId });
+          dispatch({ type: LOAD_POSTS_REQUEST, lastId });
         }
       }
     }
@@ -65,7 +65,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       type: LOAD_MY_INFO_REQUEST,
     });
     context.store.dispatch({
-      type: LOAD_POST_REQUEST,
+      type: LOAD_POSTS_REQUEST,
     });
     context.store.dispatch(END);
     await context.store.sagaTask.toPromise();

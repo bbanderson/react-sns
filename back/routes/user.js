@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   // GET /user
-  console.log(req.headers);
+  // console.log(req.headers);
   try {
     // 로그인 여부 판단
     if (req.user) {
@@ -26,6 +26,36 @@ router.get("/", async (req, res, next) => {
       res.status(200).json(fullUserWithoutPassword);
     } else {
       res.status(200).json(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.get("/:userId", async (req, res, next) => {
+  // GET /user/1
+  try {
+    // 로그인 여부 판단
+    const fullUserWithoutPassword = await User.findOne({
+      where: { id: req.params.userId },
+      attributes: {
+        exclude: ["password"],
+      },
+      include: [
+        { model: User, as: "Followers", attributes: ["id"] },
+        { model: User, as: "Followings", attributes: ["id"] },
+        { model: Post, attributes: ["id"] },
+      ],
+    });
+    if (fullUserWithoutPassword) {
+      const data = fullUserWithoutPassword.toJSON();
+      data.Posts = data.Posts.length; // 개인정보 침해 예방
+      data.Followers = data.Followers.length;
+      data.Followings = data.Followings.length;
+      res.status(200).json(data);
+    } else {
+      res.status(404).json("존재하지 않는 사용자입니다.");
     }
   } catch (error) {
     console.error(error);

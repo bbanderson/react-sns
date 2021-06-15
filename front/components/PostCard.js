@@ -25,7 +25,6 @@ const PostCard = ({ post }) => {
   const { me } = useSelector((state) => state.user);
   const { removePostLoading } = useSelector((state) => state.post);
   const id = me?.id; // 로그인을 했다면 id가 있을 것임.
-  const liked = post.Likers.find((v) => v.id === id);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
   const onLike = useCallback(() => {
@@ -54,6 +53,7 @@ const PostCard = ({ post }) => {
     }
     return dispatch({ type: RETWEET_REQUEST, data: post.id });
   }, [id]);
+  const liked = post.Likers.find((v) => v.id === id);
 
   return (
     <div>

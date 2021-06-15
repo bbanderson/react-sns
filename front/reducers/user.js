@@ -35,6 +35,7 @@ export const initialState = {
   removeFollowerDone: false,
   removeFollowerError: null,
   me: null,
+  userInfo: null,
   signUpData: {},
   logInData: {},
 };
@@ -162,7 +163,7 @@ const reducer = (state = initialState, action) =>
       case LOAD_USER_SUCCESS:
         draft.loadUserLoading = false;
         draft.loadUserDone = true;
-        draft.me = action.data;
+        draft.userInfo = action.data;
         break;
       case LOAD_USER_FAILURE:
         draft.loadUserLoading = false;

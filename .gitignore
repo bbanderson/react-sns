@@ -92,3 +92,4 @@ typings/
 .DS_Store
 config/
 uploads/
+*.ico

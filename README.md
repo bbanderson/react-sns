@@ -250,3 +250,40 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   await context.store.sagaTask.toPromise();
 });
 ```
+
+### 5. `getServerSideProps` VS `getStaticProps`
+접속한 상황에 따라 화면이 바뀌어야 되면 `getServerSideProps`를,  
+동일한 화면을 보여줘도 되면 `getStaticProps`를 사용합니다.  
+정적 블로그처럼 한번 쓰면 수정이 빈번하지 않으면 `getStaticProps`가 사용됩니다.  
+하지만 실제 웹서비스는 동적인 부분이 많기 때문에, `getServerSideProps`가 자주 쓰입니다.
+
+### 6. 다이나믹 라우팅
+```
+.
+└── pages
+    ├── post
+    │   └── [id].js
+    ├── _app.js
+    ├── about.js
+    ├── index.js
+    ├── profile.js
+    └── signup.js
+```
+`Next.js`의 특장점은 `/pages` 디렉토리 구조가 곧바로 URL로 적용된다는 것입니다.  
+만약 파일 이름을 `대괄호[]`로 묶으면 그 파일의 이름은 `req.params`로 접근할 수 있게 됩니다.  
+바로 여기서 또 SSR의 존재 이유가 등장하는데요.
+1. 상세 페이지라고 하더라도 컴포넌트가 그려지기 전부터 `Backend`에서  
+모든 정보를 전송하는 효과를 주기에 `SEO(검색엔진 최적화)`를 노릴 수 있습니다.
+2. 또한 이후에 얼마나 많은 게시글이 있을지에 상관없이 동일한 템플릿으로  
+쉽게 대응할 수 있습니다.
+3. 카톡 등으로 링크 공유 시 `og(open graph)` 적용이 가능합니다.
+
+`/pages/post/[id].js`에서 `wrapper.getServerSideProps()`로 SSR을 적용해 봅시다.
+
+### 7. favicon 추가
+```
+.
+└── public
+    └── favicon.ico
+```
+Front Server의 루트에 `public` 폴더를 만들고, 그 안에 `.ico`, `.png` 등 파일을 추가하면 Browser가 자동으로 로드합니다.

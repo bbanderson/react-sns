@@ -78,9 +78,9 @@ function removeFollowerAPI(data) {
   return axios.delete(`/user/follower/${data}`);
 }
 
-function* loadMyInfo(action) {
+function* loadMyInfo() {
   try {
-    const result = yield call(loadMyInfoAPI, action.data);
+    const result = yield call(loadMyInfoAPI);
     yield put({ type: LOAD_MY_INFO_SUCCESS, data: result.data });
   } catch (err) {
     console.error(err);
