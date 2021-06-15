@@ -4,31 +4,19 @@ import { combineReducers } from 'redux';
 import user from './user';
 import post from './post';
 
-const changeNickName = {
-  type: 'CHANGE_NICKNAME',
-  data: 'bbanderson',
-};
-
-const rootReducer = combineReducers({
-  index: (state = {}, action) => {
-    switch (action.type) {
-      case HYDRATE: // HYDRATE: SSR을 위함. 사실상 SSR을 위해 index.js가 필요.
-        console.log('HYDRATE', action);
-        return {
-          ...state,
-          ...action.payload,
-        };
-      case 'CHANGE_NICKNAME':
-        return {
-          ...state,
-          name: action.name,
-        };
-      default:
-        return state;
+const rootReducer = (state, action) => {
+  switch (action.type) {
+    case HYDRATE:
+      console.log('HYDRATE', action);
+      return action.payload;
+    default: {
+      const combinedReducer = combineReducers({
+        user,
+        post,
+      });
+      return combinedReducer(state, action);
     }
-  },
-  user,
-  post,
-});
+  }
+};
 
 export default rootReducer;
