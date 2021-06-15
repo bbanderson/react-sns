@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   // GET /user
+  console.log(req.headers);
   try {
     // 로그인 여부 판단
     if (req.user) {

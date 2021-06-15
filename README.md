@@ -173,3 +173,80 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   await context.store.sagaTask.toPromise();
 });
 ```
+
+### 4. Front Server와 Backend 간 쿠키 공유 설정
+
+```
+Browser는 SSR을 모른다!
+```
+
+컴포넌트를 렌더링하는 부분은 Browser와 Front Server가 함께 하지만,  
+SSR을 위한 `wrapper.getServerSideProps()`는 Front Server만의 영역입니다.  
+그런데 Front Server와 Backend는 포트번호가 다르죠.  
+이렇게 도메인이 다르면 기본적으로 쿠키를 공유할 수 없습니다.  
+따라서 `{ credentials: true }` 설정이 필요합니다.  
+그런데, Backend의 `/app.js`에서 이미 설정을 했는데..?  
+```js
+// /app.js
+app.use(cors({
+  origin: 'http://localhost:3060', // Front Server 도메인
+  credentials: true,
+}))
+```
+
+맞습니다.  
+그럼 받는 쪽에서 문제가 없다면, 보내는 쪽에서 문제가 있다는 거겠지요?  
+SSR을 적용하기 전, CSR에서는 Front Server 이전에 `Browser`에서부터 Backend로 요청을 시작합니다.  
+즉 `Browser`가 데이터를 보낼 때, 헤더에 쿠키도 자동으로 담아주는 것이죠.  
+
+하지만 SSR을 적용하여 `wrapper.getServerSideProps()`를 호출하게 되면,  
+Browser가 아닌 `Front Server`에서부터 데이터 요청을 보냅니다.  
+Browser가 아니고서는 쿠키를 자동으로 보내는 기능이 원래 없어요.  
+따라서 우리가 axios로 쿠키를 직접 넣어서 보내주어야 합니다!  
+쿠키는 `req.headers`에 들어있습니다.
+
+###### 쓰면 안되는 Code
+Front Server는 하나인데 반해, 접속하는 Browser는 여럿이지요.  
+아래와 같이 쿠키를 저장하면, 다른 곳에서 접속한 사람이  
+기존에 접속한 남의 아이디로 로그인하는 불상사가 벌어지게 됩니다.
+```js
+import { END } from 'redux-saga';
+import axios from 'axios';
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  // 최초 로그인을 하면서 서버를 갔다오면, 그 이후로 context.req가 존재하게 됩니다.
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = cookie;
+  context.store.dispatch({
+    type: LOAD_USER_REQUEST
+  });
+  context.store.dispatch(END); // 내장 액션
+  await context.store.sagaTask.toPromise();
+});
+```
+### 🔥 보안상 매우 중요 ⭐
+```
+Front Server에서 쿠키가 공유되지 못하도록 조심하자!
+```
+#### 해결책
+따라서 아래와 같이 쿠키를 지워주도록 분기처리를 해야 합니다.
+```js
+import { END } from 'redux-saga';
+import axios from 'axios';
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  // 최초 로그인을 하면서 서버를 갔다오면, 그 이후로 context.req가 존재하게 됩니다.
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    // 실제 요청을 보내는 순간에만 잠깐 저장을 시키고,
+    // 직접 쿠키를 서버에 보내지 않는다면 초기화
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch({
+    type: LOAD_USER_REQUEST
+  });
+  context.store.dispatch(END); // 내장 액션
+  await context.store.sagaTask.toPromise();
+});
+```
