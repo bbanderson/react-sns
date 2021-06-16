@@ -264,8 +264,8 @@ const reducer = (state = initialState, action) =>
         draft.loadFollowersError = null;
         break;
       case LOAD_FOLLOWERS_SUCCESS:
-        draft.me.Followers = action.data;
         draft.loadFollowersLoading = false;
+        draft.me.Followers = action.data;
         draft.loadFollowersDone = true;
         break;
       case LOAD_FOLLOWERS_FAILURE:
@@ -278,8 +278,8 @@ const reducer = (state = initialState, action) =>
         draft.loadFollowingsError = null;
         break;
       case LOAD_FOLLOWINGS_SUCCESS:
-        draft.me.Followings = action.data;
         draft.loadFollowingsLoading = false;
+        draft.me.Followings = action.data;
         draft.loadFollowingsDone = true;
         break;
       case LOAD_FOLLOWINGS_FAILURE:

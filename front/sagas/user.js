@@ -67,11 +67,11 @@ function unfollowAPI(data) {
 }
 
 function loadFollowersAPI(data) {
-  return axios.get('/user/followers');
+  return axios.get('/user/followers', data);
 }
 
 function loadFollowingsAPI(data) {
-  return axios.get('/user/followings');
+  return axios.get('/user/followings', data);
 }
 
 function removeFollowerAPI(data) {
