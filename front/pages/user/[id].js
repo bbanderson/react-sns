@@ -16,11 +16,15 @@ const User = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { id } = router.query;
-  const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(
-    (state) => state.post
-  );
+  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
+    useSelector((state) => state.post);
   const { userInfo, me } = useSelector((state) => state.user);
 
+  useEffect(() => {
+    if (retweetError) {
+      alert(retweetError);
+    }
+  }, [retweetError]);
   useEffect(() => {
     const onScroll = () => {
       if (
